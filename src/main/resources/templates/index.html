@@ -40,16 +40,23 @@
             <p>密码：<input v-model="password" /></p>
             <button @click="login">登录</button>
         </div>
+
+        <!-- 测试@EnableAuth注解 -->
+        <div>
+            <button @click="testEnableAuth">测试EnableAuth注解</button>
+        </div>
     </div>
 
     <script type="text/javascript">
         // 从html本地存储中拿出token，设置到全局请求头中
         //axios.defaults.headers.common['Authorization'] = localStorage.getItem("token");
 
+        axios.defaults.headers.post['Content-Type'] = 'application/json';
         // 添加请求拦截器，设置请求头
         axios.interceptors.request.use(function (config) {
             // 在发送请求之前做些什么
-            config.header.Authorization = localStorage.getItem("token");
+            config.headers.Authorization = localStorage.getItem("token");
+            return config;
         }, function (error) {
             return Promise.reject(error);
         });
@@ -108,6 +115,16 @@
                             } else {
                                 alert("登录失败");
                             }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                },
+                testEnableAuth:function() {
+                    axios.get('http://localhost:8889/user/testEnableAuth')
+                        .then(function (response) {
+                            var data = response.data;
+                            alert(data);
                         })
                         .catch(function (error) {
                             console.log(error);
